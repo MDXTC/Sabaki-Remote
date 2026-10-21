@@ -11,7 +11,7 @@ without an engine (or GPU) at test time.
 Engine analysis is one of Sabaki's core features, but the parsing of GTP
 analysis output (`src/modules/analysis.js` → `parseAnalysis`, which feeds the
 `SBKV` win-rate and `SBKS` score-lead properties) was previously untested. The
-fake engine used by `e2e/engine.spec.js` only plays moves; it never produces
+fake engine used by `tests/e2e/engine.spec.js` only plays moves; it never produces
 analysis. The thing most likely to silently break parsing is an upstream engine
 changing its `info` line format, which only real output can catch.
 
@@ -19,8 +19,8 @@ The strategy is layered:
 
 | Layer                | Where                                          | What it checks                                                                                          | Engine at test time?       |
 | -------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------- |
-| Parse correctness    | `test/analysisTests.js`                        | `parseAnalysis` against recorded real `info` lines (both KataGo and Leela-Zero dialects)                | No — replays transcripts   |
-| Pipeline (e2e)       | `e2e/engine-analysis.spec.js`                  | attach → GTP analyze → `parseAnalysis` → `SBKV` written to the node, via `test/engines/replayEngine.js` | No — replays transcripts   |
+| Parse correctness    | `tests/unit/analysisTests.js`                        | `parseAnalysis` against recorded real `info` lines (both KataGo and Leela-Zero dialects)                | No — replays transcripts   |
+| Pipeline (e2e)       | `tests/e2e/engine-analysis.spec.js`                  | attach → GTP analyze → `parseAnalysis` → `SBKV` written to the node, via `tests/unit/engines/replayEngine.js` | No — replays transcripts   |
 | Real-engine contract | this script (`npm run gen:engine-transcripts`) | that real engines still emit what we parse                                                              | **Yes** — runs the engines |
 
 Only the last layer needs engines installed, and it is intentionally **not part
@@ -30,11 +30,11 @@ of `npm test` or CI**, it is a manual capture step.
 
 - `engines.config.mjs` - the engine version matrix and SGF matrix.
 - `capture.mjs` - drives each engine over GTP across each SGF and writes
-  transcripts to `test/resources/engine-transcripts/<engine-id>/`.
-- `../../test/resources/engine-transcripts/` - committed golden transcripts +
+  transcripts to `tests/unit/resources/engine-transcripts/<engine-id>/`.
+- `../../tests/unit/resources/engine-transcripts/` - committed golden transcripts +
   `manifest.json` (the fixtures the tests replay).
-- `../../test/resources/engine-transcripts/sgf/` - the SGF positions analysed.
-- `../../test/engines/replayEngine.js` - fake GTP engine that replays a
+- `../../tests/unit/resources/engine-transcripts/sgf/` - the SGF positions analysed.
+- `../../tests/unit/engines/replayEngine.js` - fake GTP engine that replays a
   transcript for the e2e test.
 
 ## Regenerating transcripts
@@ -53,7 +53,7 @@ Note: `kata-analyze`/`lz-analyze` search continuously until interrupted, so
 capture is bounded by wall-clock time (`capture.settleMs`), not a fixed visit
 count. Regenerating therefore produces fresh, valid transcripts with different
 visit counts/winrates, not byte-identical ones. Re-run after changing the matrix
-and commit the refreshed `test/resources/engine-transcripts` tree.
+and commit the refreshed `tests/unit/resources/engine-transcripts` tree.
 
 ## Extending coverage
 
@@ -61,11 +61,11 @@ and commit the refreshed `test/resources/engine-transcripts` tree.
   `engines.config.mjs` (binary, weights URL, analysis commands), then
   regenerate. On Linux/CI, KataGo also ships pure-CPU `eigen` builds suitable
   for a (separate, scheduled) real-engine job.
-- **New position:** drop an SGF into `test/resources/engine-transcripts/sgf/`
+- **New position:** drop an SGF into `tests/unit/resources/engine-transcripts/sgf/`
   and list it in `sgfs`, then regenerate.
 - **New analysis feature** (e.g. a new property like `SBKS`): the KataGo
   `kata-analyze` transcripts already include `scoreLead`; assert on it in
-  `test/analysisTests.js` and, once the feature writes the property, in the e2e.
+  `tests/unit/analysisTests.js` and, once the feature writes the property, in the e2e.
 
 ## Dialects captured today
 

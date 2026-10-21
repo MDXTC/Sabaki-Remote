@@ -167,7 +167,7 @@ test.describe('GTP Engine Integration Tests', () => {
   })
 
   test('board state sync after loading SGF', async ({page}) => {
-    const sgfPath = path.resolve(__dirname, '..', 'test', 'sgf', 'pro_game.sgf')
+    const sgfPath = path.resolve(__dirname, '..', 'unit', 'sgf', 'pro_game.sgf')
 
     await loadSgfAndWait(page, sgfPath)
 

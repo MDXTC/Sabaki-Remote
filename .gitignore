@@ -19,3 +19,6 @@ test-results/
 
 # GTP communication logs written at runtime when engines are attached
 gtp_logs/
+
+# Local runtime logs and debugging output (see CLAUDE.md)
+logs/

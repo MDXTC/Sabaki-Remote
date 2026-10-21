@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {ugf} from '../src/modules/fileformats/index.js'
+import {ugf} from '../../src/modules/fileformats/index.js'
 
 describe('ugf', () => {
   describe('parse', () => {

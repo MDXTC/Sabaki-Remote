@@ -12,7 +12,7 @@ import {dirname, join} from 'path'
 // main-process logic belongs at the src root (e.g. src/argv.js) instead. See the
 // "Process boundaries" note in CLAUDE.md.
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const mainSource = readFileSync(join(root, 'src', 'main.js'), 'utf8')
 
 describe('main-process module boundary', () => {

@@ -7,7 +7,7 @@ const portableDir = process.env.PORTABLE_EXECUTABLE_DIR
 
 for (let dir of [
   (exports.userDataDirectory = portableDir
-    ? path.join(portableDir, 'Sabaki')
+    ? path.join(portableDir, 'Sabaki Remote')
     : app.getPath('userData')),
   (exports.themesDirectory = path.join(exports.userDataDirectory, 'themes')),
 ]) {

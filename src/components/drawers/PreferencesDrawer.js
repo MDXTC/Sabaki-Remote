@@ -16,6 +16,12 @@ import {
   isWritableDirectory,
 } from '../../modules/helper.js'
 import * as gtplogger from '../../modules/gtplogger.js'
+import {
+  LOCAL_TRANSPORT,
+  SSH_TRANSPORT,
+  normalizeSsh,
+  validateSshEngine,
+} from '../../modules/ssh.js'
 import Drawer from './Drawer.js'
 
 const setting = {
@@ -621,10 +627,27 @@ class EngineItem extends Component {
     super()
 
     this.handleChange = (evt) => {
-      let {id, name, path, args, commands, onChange = noop} = this.props
+      let {id, onChange = noop} = this.props
       let element = evt.currentTarget
+      let name = element.name
+      let value = element.type === 'checkbox' ? element.checked : element.value
 
-      onChange({id, name, path, args, commands, [element.name]: element.value})
+      let engine = {
+        name: this.props.name,
+        transport: this.props.transport || LOCAL_TRANSPORT,
+        path: this.props.path,
+        args: this.props.args,
+        commands: this.props.commands,
+        ssh: {...(this.props.ssh || {})},
+      }
+
+      if (name.startsWith('ssh.')) {
+        engine.ssh[name.slice('ssh.'.length)] = value
+      } else {
+        engine[name] = value
+      }
+
+      onChange({id, ...engine})
     }
 
     this.handleBrowseButtonClick = async () => {
@@ -634,8 +657,37 @@ class EngineItem extends Component {
       })
       if (!result || result.length === 0) return
 
-      let {id, name, args, commands, onChange = noop} = this.props
-      onChange({id, name, args, commands, path: result[0]})
+      let {id, onChange = noop} = this.props
+      let engine = {
+        name: this.props.name,
+        transport: this.props.transport || LOCAL_TRANSPORT,
+        path: this.props.path,
+        args: this.props.args,
+        commands: this.props.commands,
+        ssh: {...(this.props.ssh || {})},
+      }
+
+      onChange({id, ...engine, path: result[0]})
+    }
+
+    this.handleBrowseIdentityButtonClick = async () => {
+      let result = await showOpenDialog({
+        properties: ['openFile'],
+        filters: [{name: t('All Files'), extensions: ['*']}],
+      })
+      if (!result || result.length === 0) return
+
+      let {id, onChange = noop} = this.props
+      let engine = {
+        name: this.props.name,
+        transport: this.props.transport || LOCAL_TRANSPORT,
+        path: this.props.path,
+        args: this.props.args,
+        commands: this.props.commands,
+        ssh: {...(this.props.ssh || {})},
+      }
+
+      onChange({id, ...engine, ssh: {...engine.ssh, identityFile: result[0]}})
     }
 
     this.handleRemoveButtonClick = () => {
@@ -644,7 +696,11 @@ class EngineItem extends Component {
     }
   }
 
-  render({name, path, args, commands}) {
+  render({name, transport, path, args, commands, ssh}) {
+    let isSsh = transport === SSH_TRANSPORT
+    let sshConfig = normalizeSsh({ssh})
+    let sshErrors = validateSshEngine({transport, path, args, ssh})
+
     return h(
       'li',
       {},
@@ -673,22 +729,120 @@ class EngineItem extends Component {
         'p',
         {},
         h(
-          'a',
+          'select',
           {
-            class: 'browse',
-            title: t('Browse…'),
-            onClick: this.handleBrowseButtonClick,
+            name: 'transport',
+            value: isSsh ? SSH_TRANSPORT : LOCAL_TRANSPORT,
+            onChange: this.handleChange,
           },
 
-          h('img', {
-            src: './node_modules/@primer/octicons/build/svg/file-directory-16.svg',
+          h(
+            'option',
+            {value: LOCAL_TRANSPORT},
+            t('Local process (GTP over stdin/stdout)'),
+          ),
+          h('option', {value: SSH_TRANSPORT}, t('Remote server over SSH')),
+        ),
+      ),
+      isSsh &&
+        h(
+          'p',
+          {},
+          h('input', {
+            type: 'text',
+            placeholder: t('Host (e.g., gpu.example.com)'),
+            value: sshConfig.host,
+            name: 'ssh.host',
+            onChange: this.handleChange,
           }),
         ),
+      isSsh &&
+        h(
+          'p',
+          {},
+          h('input', {
+            type: 'text',
+            placeholder: t('User (optional, defaults to your SSH config)'),
+            value: sshConfig.user,
+            name: 'ssh.user',
+            onChange: this.handleChange,
+          }),
+        ),
+      isSsh &&
+        h(
+          'p',
+          {},
+          h('input', {
+            type: 'text',
+            placeholder: t('Port (optional, default 22)'),
+            value: sshConfig.port == null ? '' : String(sshConfig.port),
+            name: 'ssh.port',
+            onChange: this.handleChange,
+          }),
+        ),
+      isSsh &&
+        h(
+          'p',
+          {},
+          h(
+            'a',
+            {
+              class: 'browse',
+              title: t('Browse…'),
+              onClick: this.handleBrowseIdentityButtonClick,
+            },
+
+            h('img', {
+              src: './node_modules/@primer/octicons/build/svg/file-directory-16.svg',
+            }),
+          ),
+          h('input', {
+            type: 'text',
+            placeholder: t('Identity file (optional, e.g., ~/.ssh/id_ed25519)'),
+            value: sshConfig.identityFile,
+            name: 'ssh.identityFile',
+            onChange: this.handleChange,
+          }),
+        ),
+      isSsh &&
+        h(
+          'p',
+          {class: 'checkbox'},
+          h(
+            'label',
+            {},
+            h('input', {
+              type: 'checkbox',
+              name: 'ssh.strictHostKeyChecking',
+              checked: sshConfig.strictHostKeyChecking,
+              onChange: this.handleChange,
+            }),
+            ' ',
+            t('Verify host key against known_hosts (recommended)'),
+          ),
+        ),
+      h(
+        'p',
+        {},
+        isSsh
+          ? null
+          : h(
+              'a',
+              {
+                class: 'browse',
+                title: t('Browse…'),
+                onClick: this.handleBrowseButtonClick,
+              },
+
+              h('img', {
+                src: './node_modules/@primer/octicons/build/svg/file-directory-16.svg',
+              }),
+            ),
         h('input', {
           type: 'text',
-          placeholder: t(
-            'Path (e.g., /path/to/engine or C:\\path\\to\\engine.exe)',
-          ),
+          placeholder: isSsh
+            ? t('Engine path on the remote server (e.g., /opt/katago/katago)')
+            : t('Path (e.g., /path/to/engine or C:\\path\\to\\engine.exe)'),
           value: path || '',
           name: 'path',
           onChange: this.handleChange,
@@ -699,9 +853,9 @@ class EngineItem extends Component {
         {},
         h('input', {
           type: 'text',
-          placeholder: t(
-            'Optional arguments (e.g., -param1 value1 -param2 value2)',
-          ),
+          placeholder: isSsh
+            ? t('Remote arguments (e.g., gtp -model … -config …)')
+            : t('Optional arguments (e.g., -param1 value1 -param2 value2)'),
           value: args || '',
           name: 'args',
           onChange: this.handleChange,
@@ -718,6 +872,21 @@ class EngineItem extends Component {
           onChange: this.handleChange,
         }),
       ),
+      isSsh &&
+        sshErrors.length > 0 &&
+        h(
+          'p',
+          {class: 'ssh-error'},
+          ...sshErrors.map((error) => h('span', {}, error)),
+        ),
+      isSsh &&
+        h(
+          'p',
+          {class: 'ssh-note'},
+          t(
+            'Public-key authentication only. Passwords are never used or stored.',
+          ),
+        ),
     )
   }
 }
@@ -726,10 +895,18 @@ class EnginesTab extends Component {
   constructor() {
     super()
 
-    this.handleItemChange = ({id, name, path, args, commands}) => {
+    this.handleItemChange = ({
+      id,
+      name,
+      transport,
+      path,
+      args,
+      commands,
+      ssh,
+    }) => {
       let engines = this.props.engines.slice()
 
-      engines[id] = {name, path, args, commands}
+      engines[id] = {name, transport, path, args, commands, ssh}
       setting.set('engines.list', engines)
     }
 
@@ -743,7 +920,10 @@ class EnginesTab extends Component {
     this.handleAddButtonClick = (evt) => {
       evt.preventDefault()
 
-      let engines = [{name: '', path: '', args: ''}, ...this.props.engines]
+      let engines = [
+        {name: '', transport: LOCAL_TRANSPORT, path: '', args: '', ssh: {}},
+        ...this.props.engines,
+      ]
       setting.set('engines.list', engines)
 
       setImmediate(() => {
@@ -779,13 +959,15 @@ class EnginesTab extends Component {
         h(
           'ul',
           {},
-          engines.map(({name, path, args, commands}, id) =>
+          engines.map(({name, transport, path, args, commands, ssh}, id) =>
             h(EngineItem, {
               id,
               name,
+              transport,
               path,
               args,
               commands,
+              ssh,
 
               onChange: this.handleItemChange,
               onRemove: this.handleItemRemove,

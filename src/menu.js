@@ -3,7 +3,7 @@ const nativeRequire = eval('require')
 const {shell, clipboard} = require('electron')
 const isRenderer = typeof window !== 'undefined' && window.sabaki != null
 const {app} = isRenderer
-  ? {app: {name: 'Sabaki', getVersion: () => ''}}
+  ? {app: {name: 'Sabaki Remote', getVersion: () => ''}}
   : require('electron')
 
 const i18n = require('./i18n')

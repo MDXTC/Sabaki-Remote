@@ -66,10 +66,10 @@ $ npm test
 ### E2E Tests
 
 Sabaki includes Playwright-based end-to-end tests that launch the full Electron
-application. The test files live in the `e2e/` directory:
+application. The test files live in the `tests/e2e/` directory:
 
 ```
-e2e/
+tests/e2e/
 ├── fixtures/
 │   └── electron-app.js   # Shared Playwright fixture (launches Sabaki)
 ├── helpers.js             # Shared helper functions
@@ -98,10 +98,10 @@ $ npx playwright test --project=renderer   # Run one suite (skip rebuild)
 
 **Writing new tests:**
 
-- Create a `*.spec.js` file in `e2e/` and add a matching project entry in
+- Create a `*.spec.js` file in `tests/e2e/` and add a matching project entry in
   `playwright.config.js`.
-- Import the `test` object from `e2e/fixtures/electron-app.js` — this provides
+- Import the `test` object from `tests/e2e/fixtures/electron-app.js` — this provides
   `electronApp` and `page` fixtures with isolated settings and dialog stubs.
-- Use helpers from `e2e/helpers.js` (`loadSgfAndWait`, `getTreeDepth`,
+- Use helpers from `tests/e2e/helpers.js` (`loadSgfAndWait`, `getTreeDepth`,
   `attachAndWaitForEngines`, etc.) for common operations.
 - Access app state via `window.__sabaki` in `page.evaluate()` calls.

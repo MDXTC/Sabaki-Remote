@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {ngf} from '../src/modules/fileformats/index.js'
+import {ngf} from '../../src/modules/fileformats/index.js'
 
 describe('ngf', () => {
   describe('parse', () => {

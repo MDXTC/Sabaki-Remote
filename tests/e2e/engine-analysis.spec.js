@@ -11,7 +11,7 @@ const {
 // analysis, and confirm the engine's reported win rate and score lead are
 // written onto the current node as the SBKV and SBKS properties.
 //
-// The engine here is test/engines/replayEngine.js, which replays a GOLDEN
+// The engine here is tests/unit/engines/replayEngine.js, which replays a GOLDEN
 // TRANSCRIPT — real `info ...` lines recorded from KataGo by
 // scripts/engine-transcripts/capture.mjs. So this exercises the genuine
 // attach → GTP analyze → parseAnalysis → SBKV path against real engine output,
@@ -20,14 +20,14 @@ const {
 const RES = path.resolve(
   __dirname,
   '..',
-  'test',
+  'unit',
   'resources',
   'engine-transcripts',
 )
 const REPLAY_ENGINE = path.resolve(
   __dirname,
   '..',
-  'test',
+  'unit',
   'engines',
   'replayEngine.js',
 )

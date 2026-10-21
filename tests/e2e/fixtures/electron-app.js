@@ -35,7 +35,7 @@ const test = base.extend({
     )
 
     const electronPath = require('electron')
-    const appPath = path.resolve(__dirname, '..', '..')
+    const appPath = path.resolve(__dirname, '..', '..', '..')
 
     // On Linux CI, the chrome-sandbox binary requires setuid root permissions
     // which aren't available. Disable the sandbox in CI environments.

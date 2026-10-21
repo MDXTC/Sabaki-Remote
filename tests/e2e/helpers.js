@@ -141,7 +141,7 @@ async function detachAndWait(page, syncerIds) {
 const enginePath = path.resolve(
   __dirname,
   '..',
-  'test',
+  'unit',
   'engines',
   'resignEngine.js',
 )

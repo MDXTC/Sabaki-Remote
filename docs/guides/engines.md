@@ -46,3 +46,40 @@ List of this parameters can be found in engine documentation.
   level of expert players.
 
   Arguments: None
+
+## Remote engines over SSH
+
+Sabaki Remote can run an engine on another machine and use it as if it were
+local. GTP commands are written to the stdin of a local `ssh` process and the
+engine's responses are read from its stdout, so no port is opened and no
+engine-specific server is needed.
+
+1. Open **Preferences → Engines** and add an engine.
+2. Set **Transport** to **Remote server over SSH**.
+3. Enter the host (and optionally user, port, and identity file).
+4. Set **Engine path** to the engine binary on the remote machine, and
+   **Arguments** to the arguments you would pass to it there.
+
+```
+Host:          gpu.example.com
+User:          alice
+Port:          22
+Identity file: (empty — use ssh-agent or ~/.ssh/config)
+Engine path:   /opt/katago/katago
+Arguments:     gtp -model /models/kata1.bin.gz -config /etc/katago/gtp.cfg
+```
+
+Security notes:
+
+- Only public-key authentication is used. `BatchMode=yes`,
+  `PreferredAuthentications=publickey`, and `PasswordAuthentication=no` are
+  enforced, so Sabaki never sees or stores a password.
+- Host keys are verified against `known_hosts` by default. Disable **Verify host
+  key** only if you understand the risk; it switches ssh to
+  `StrictHostKeyChecking=accept-new`.
+- Agent and X11 forwarding are disabled, and `PermitLocalCommand` is off, so a
+  compromised shared server cannot use the connection to reach your machine.
+- The identity file is pinned with `IdentitiesOnly=yes` when specified.
+- On a shared server, keep the engine within **16 threads** and **50 GB of
+  memory**, and tune its config accordingly so your session does not starve
+  other users.

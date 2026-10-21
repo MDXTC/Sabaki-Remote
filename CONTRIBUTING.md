@@ -24,7 +24,7 @@ First of all, thank you for taking the time to contribute to Sabaki!
   can use the command `npm run format` to format all the files.
 - Avoid platform-dependent code.
 - Create mocha unit tests if possible and applicable. For UI or integration
-  behavior, add Playwright E2E tests in the `e2e/` directory.
+  behavior, add Playwright E2E tests in the `tests/e2e/` directory.
 - Document new code in the documentation if applicable.
 - Note the issue number in your pull request.
 

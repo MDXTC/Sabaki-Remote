@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-import {cycleAreaValue, markupCleanupProperties} from '../src/modules/utils.js'
+import {cycleAreaValue, markupCleanupProperties} from '../../src/modules/utils.js'
 
 // cycleAreaValue backs the manual territory overrides in scoring/estimator mode.
 // Area values are -1 (white) / 0 (neutral) / 1 (black), and `steps` advances a

@@ -31,7 +31,7 @@ test.describe('Smoke Tests', () => {
   })
 
   test('load SGF via IPC from main process', async ({electronApp, page}) => {
-    const sgfPath = path.resolve(__dirname, '..', 'test', 'sgf', 'pro_game.sgf')
+    const sgfPath = path.resolve(__dirname, '..', 'unit', 'sgf', 'pro_game.sgf')
 
     // Load file through the main→renderer IPC channel (webContents.send),
     // which mirrors how Electron sends load-file events (e.g. open-file, CLI arg).
@@ -57,7 +57,7 @@ test.describe('Smoke Tests', () => {
     const sgfPath = path.resolve(
       __dirname,
       '..',
-      'test',
+      'unit',
       'sgf',
       'beginner_game.sgf',
     )

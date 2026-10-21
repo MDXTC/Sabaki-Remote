@@ -1,21 +1,21 @@
 {
-  "name": "sabaki",
-  "productName": "Sabaki",
+  "name": "sabaki-remote",
+  "productName": "Sabaki Remote",
   "version": "0.60.2",
-  "description": "An elegant Go/Baduk/Weiqi board and SGF editor for a more civilized age.",
+  "description": "A Sabaki fork that runs Go engines on a remote server over SSH.",
   "author": "Yichuan Shen <shen.yichuan@gmail.com>",
-  "homepage": "http://sabaki.yichuanshen.de",
+  "homepage": "https://github.com/MDXTC/Sabaki-Remote",
   "license": "MIT",
   "main": "./src/main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SabakiHQ/Sabaki"
+    "url": "https://github.com/MDXTC/Sabaki-Remote"
   },
   "bugs": {
-    "url": "https://github.com/SabakiHQ/Sabaki/issues"
+    "url": "https://github.com/MDXTC/Sabaki-Remote/issues"
   },
   "build": {
-    "appId": "de.yichuanshen.sabaki",
+    "appId": "com.mdx.sabakiremote",
     "copyright": "Copyright © 2015-2026 Yichuan Shen",
     "compression": "normal",
     "electronFuses": {
@@ -31,7 +31,7 @@
     "linux": {
       "target": "AppImage",
       "category": "Game",
-      "artifactName": "sabaki-v${version}-linux-${arch}.${ext}"
+      "artifactName": "sabaki-remote-v${version}-linux-${arch}.${ext}"
     },
     "flatpak": {
       "runtimeVersion": "23.08",
@@ -46,7 +46,7 @@
         "--filesystem=home",
         "--talk-name=org.freedesktop.Flatpak"
       ],
-      "artifactName": "sabaki-v${version}-linux-${arch}-beta.${ext}"
+      "artifactName": "sabaki-remote-v${version}-linux-${arch}-beta.${ext}"
     },
     "mac": {
       "target": [
@@ -54,10 +54,10 @@
       ],
       "notarize": true,
       "category": "public.app-category.board-games",
-      "artifactName": "sabaki-v${version}-mac-${arch}.${ext}"
+      "artifactName": "sabaki-remote-v${version}-mac-${arch}.${ext}"
     },
     "win": {
-      "artifactName": "sabaki-v${version}-win.exe"
+      "artifactName": "sabaki-remote-v${version}-win.exe"
     },
     "nsis": {
       "oneClick": false,
@@ -151,7 +151,7 @@
     "webpack-cli": "^7.2.1"
   },
   "scripts": {
-    "test": "mocha --require tsx",
+    "test": "mocha --require tsx tests/unit",
     "start": "electron ./",
     "bundle": "webpack --mode production",
     "build": "npm run bundle && electron-builder --dir",

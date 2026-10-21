@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {gib} from '../src/modules/fileformats/index.js'
+import {gib} from '../../src/modules/fileformats/index.js'
 
 describe('gib', () => {
   describe('parse', () => {

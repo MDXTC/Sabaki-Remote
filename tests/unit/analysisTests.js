@@ -3,7 +3,7 @@ import {readFileSync, existsSync} from 'fs'
 import {join} from 'path'
 import {fromDimensions as newBoard} from '@sabaki/go-board'
 
-import {parseAnalysis, getAnalysisHeatMapCell} from '../src/modules/analysis.js'
+import {parseAnalysis, getAnalysisHeatMapCell} from '../../src/modules/analysis.js'
 
 // These tests verify the GTP analysis parser (the SBKV / scoreLead extraction
 // path) against GOLDEN TRANSCRIPTS  (real `info ...` lines recorded from real

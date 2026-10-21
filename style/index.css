@@ -1199,6 +1199,36 @@ header {
     width: 100%;
     background: transparent !important;
   }
+  .engines-list select {
+    box-sizing: border-box;
+    border: none;
+    padding: 0;
+    width: 100%;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+  .engines-list input[type='checkbox'] {
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: .4em;
+    vertical-align: middle;
+  }
+  .engines-list li p.checkbox label {
+    cursor: pointer;
+  }
+  .engines-list li p.ssh-note {
+    opacity: .5;
+    font-size: .85em;
+    margin-top: .5em;
+  }
+  .engines-list li p.ssh-error {
+    color: #E81123;
+    font-size: .85em;
+  }
+  .engines-list li p.ssh-error span {
+    display: block;
+  }
   .engines-list li p input {
     font: 14px/1.3 Consolas, Menlo, Monaco, 'Ubuntu Mono', monospace;
   }

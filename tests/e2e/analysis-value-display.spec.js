@@ -21,14 +21,14 @@ const {
 const RES = path.resolve(
   __dirname,
   '..',
-  'test',
+  'unit',
   'resources',
   'engine-transcripts',
 )
 const REPLAY_ENGINE = path.resolve(
   __dirname,
   '..',
-  'test',
+  'unit',
   'engines',
   'replayEngine.js',
 )

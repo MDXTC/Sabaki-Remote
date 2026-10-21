@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-import {getOpenFileFromArgv} from '../src/argv.js'
+import {getOpenFileFromArgv} from '../../src/argv.js'
 
 // Backs the launch-time "open this file" handling in main.js. argv[0] is always
 // the binary; the file to open (if any) is somewhere in the rest, mixed with

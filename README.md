@@ -1,8 +1,33 @@
-# ![Sabaki: An elegant Go/Baduk/Weiqi board and SGF editor for a more civilized age.](./banner.png)
+# ![Sabaki Remote: An elegant Go/Baduk/Weiqi board and SGF editor for a more civilized age.](./banner.png)
 
-[![Download the latest release](https://img.shields.io/github/downloads/SabakiHQ/Sabaki/latest/total?label=download)](https://github.com/SabakiHQ/Sabaki/releases)
-[![CI](https://github.com/SabakiHQ/Sabaki/workflows/CI/badge.svg?branch=master&event=push)](https://github.com/SabakiHQ/Sabaki/actions)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://www.paypal.me/yishn/5)
+**Sabaki Remote** is a fork of [Sabaki](https://github.com/SabakiHQ/Sabaki) that
+can run GTP engines on a remote server over SSH. The UI stays local; the model
+runs where the GPU is.
+
+## Remote engines over SSH
+
+Sabaki Remote does not open any network port. When an engine is configured with
+the `ssh` transport, the app spawns a local `ssh` process and speaks GTP over
+its stdin/stdout, so the connection is encrypted and authenticated by SSH
+itself. Only public-key authentication is used — passwords are never collected
+or stored.
+
+To configure one, open **Preferences → Engines**, set **Transport** to **SSH
+remote**, and fill in:
+
+| Field           | Example                          | Notes                                                                 |
+| --------------- | -------------------------------- | --------------------------------------------------------------------- |
+| Host            | `gpu.example.com`                | `user@host` is also accepted                                          |
+| User            | `alice`                          | Optional; defaults to your SSH config                                 |
+| Port            | `22`                             | Optional                                                              |
+| Identity file   | `C:\Users\alice\.ssh\id_ed25519` | Optional; leave empty to use ssh-agent / `~/.ssh/config`              |
+| Verify host key | checked                          | Highly recommended. Unchecked uses `StrictHostKeyChecking=accept-new` |
+| Engine path     | `/opt/katago/katago`             | Path **on the remote server**                                         |
+| Arguments       | `gtp -model … -config …`         | Passed to the remote engine                                           |
+
+The remote command is executed with the SSH user's default login shell. Make
+sure the host key is already in `known_hosts` (or connect once from a terminal
+first) and that `ssh-agent` holds the key if it is passphrase-protected.
 
 ## Features
 

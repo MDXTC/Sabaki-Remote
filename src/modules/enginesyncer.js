@@ -12,6 +12,7 @@ import i18n from '../i18n.js'
 import {getBoard, getRootProperty} from './gametree.js'
 import {noop, equals} from './helper.js'
 import {parseAnalysis} from './analysis.js'
+import {isSshEngine, buildSshCommand} from './ssh.js'
 
 const t = i18n.context('EngineSyncer')
 const setting = {
@@ -46,31 +47,53 @@ export default class EngineSyncer extends EventEmitter {
     this.commands = []
     this.treePosition = null
 
-    let absolutePath = resolve(path)
-    let executePath = existsSync(absolutePath) ? absolutePath : path
-    let executeArgs = [...argvsplit(args)]
+    let executePath, executeArgs, cwd
 
-    // In a Flatpak sandbox, host engine binaries can't be run directly; route
-    // them through flatpak-spawn --host, preserving the working directory.
-    if (process.env.FLATPAK_ID != null) {
-      executeArgs = [
-        '--host',
-        `--directory=${dirname(absolutePath)}`,
-        executePath,
-        ...executeArgs,
-      ]
-      executePath = 'flatpak-spawn'
+    if (isSshEngine(engine)) {
+      // GTP travels over the stdin/stdout of a local ssh process. No port is
+      // opened on either side; ssh handles encryption and authentication.
+      let invocation = buildSshCommand(engine)
+      executePath = invocation.path
+      executeArgs = invocation.args
+      cwd = invocation.cwd
+
+      if (process.env.FLATPAK_ID != null) {
+        executeArgs = ['--host', executePath, ...executeArgs]
+        executePath = 'flatpak-spawn'
+      }
+    } else {
+      let absolutePath = resolve(path)
+      executePath = existsSync(absolutePath) ? absolutePath : path
+      executeArgs = [...argvsplit(args)]
+      cwd = dirname(absolutePath)
+
+      // In a Flatpak sandbox, host engine binaries can't be run directly; route
+      // them through flatpak-spawn --host, preserving the working directory.
+      if (process.env.FLATPAK_ID != null) {
+        executeArgs = [
+          '--host',
+          `--directory=${dirname(absolutePath)}`,
+          executePath,
+          ...executeArgs,
+        ]
+        executePath = 'flatpak-spawn'
+      }
     }
 
-    this.controller = new Controller(executePath, executeArgs, {
-      cwd: dirname(absolutePath),
-    })
+    this.controller = new Controller(executePath, executeArgs, {cwd})
 
     this.stateTracker = new ControllerStateTracker(this.controller)
 
     this.controller.on('started', () => {
       this.treePosition = null
       this.analysis = null
+
+      // A missing ssh binary (or any other spawn failure) emits 'error' on the
+      // child process. Without a listener that would be an unhandled error in
+      // the renderer, so surface it in the GTP console instead.
+      this.controller.process?.once('error', (err) => {
+        this.controller.emit('stderr', {content: err.message})
+      })
 
       Promise.all([
         this.controller.sendCommand({name: 'name'}),

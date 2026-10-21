@@ -4,9 +4,9 @@
 //
 // Drives real Go engines (KataGo, Leela Zero) over GTP and records their raw
 // `info ...` analysis lines as fixtures under
-// test/resources/engine-transcripts/<engine-id>/. Those fixtures are the
+// tests/unit/resources/engine-transcripts/<engine-id>/. Those fixtures are the
 // "golden transcripts" the engine-integration test suite replays, so that the
-// parsing tests (test/analysisTests.js) and the e2e replay engine exercise the
+// parsing tests (tests/unit/analysisTests.js) and the e2e replay engine exercise the
 // EXACT bytes real engines emit, deterministically, without an engine at test
 // time.
 //
@@ -33,8 +33,8 @@ const newBoard = goBoard.fromDimensions
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const REPO = join(HERE, '..', '..')
-const SGF_DIR = join(REPO, 'test', 'resources', 'engine-transcripts', 'sgf')
-const OUT_DIR = join(REPO, 'test', 'resources', 'engine-transcripts')
+const SGF_DIR = join(REPO, 'tests', 'unit', 'resources', 'engine-transcripts', 'sgf')
+const OUT_DIR = join(REPO, 'tests', 'unit', 'resources', 'engine-transcripts')
 const CACHE = join(REPO, '.engine-cache')
 const NET_DIR = join(CACHE, 'nets')
 

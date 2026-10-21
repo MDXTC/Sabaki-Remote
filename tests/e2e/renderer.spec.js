@@ -9,7 +9,7 @@ test.describe('Renderer Integration Tests', () => {
       const sgfPath = path.resolve(
         __dirname,
         '..',
-        'test',
+        'unit',
         'sgf',
         'pro_game.sgf',
       )
@@ -90,7 +90,7 @@ test.describe('Renderer Integration Tests', () => {
       const sgfPath = path.resolve(
         __dirname,
         '..',
-        'test',
+        'unit',
         'sgf',
         'beginner_game.sgf',
       )

@@ -1,7 +1,7 @@
 const {defineConfig} = require('@playwright/test')
 
 module.exports = defineConfig({
-  testDir: './e2e',
+  testDir: './tests/e2e',
   timeout: 60000,
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Electron tests must run serially
@@ -42,6 +42,11 @@ module.exports = defineConfig({
     {
       name: 'settings-cache',
       testMatch: /settings-cache\.spec\.js/,
+      dependencies: ['smoke'],
+    },
+    {
+      name: 'ssh-engine-settings',
+      testMatch: /ssh-engine-settings\.spec\.js/,
       dependencies: ['smoke'],
     },
     {

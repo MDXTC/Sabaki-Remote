@@ -5,7 +5,7 @@
 //
 // To extend coverage:
 //   - add an engine build to `engines` (a new version, or a different engine),
-//   - and/or drop a new SGF into test/resources/engine-transcripts/sgf and list
+//   - and/or drop a new SGF into tests/unit/resources/engine-transcripts/sgf and list
 //     it in `sgfs`,
 // then re-run the capture and commit the refreshed fixtures + manifest.
 //
@@ -58,7 +58,7 @@ export const engines = [
   // },
 ]
 
-// SGF positions to analyse, relative to test/resources/engine-transcripts/sgf.
+// SGF positions to analyse, relative to tests/unit/resources/engine-transcripts/sgf.
 // Kept small (few moves, mixed board sizes) so capture is fast.
 export const sgfs = [
   'empty-19.sgf',
